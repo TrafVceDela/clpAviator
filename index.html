@@ -438,13 +438,6 @@
     </style>
   </head>
   <body>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loading-overlay">
-      <div class="loading-spinner"></div>
-      <div class="loading-text">Verificando tu ID...</div>
-    </div>
-
-    <!-- Modal Overlay -->
     <div class="modal-overlay" id="modal-overlay">
       <div class="modal-content">
         <span class="close-modal" id="close-modal">&times;</span>
@@ -481,24 +474,7 @@
         CÓMO USAR EL BOT
       </button>
 
-      <div class="id-form" id="id-form">
-        <div class="setting-group">
-          <label for="user-id">Ingresa TU ID de cuenta Betwinner</label>
-          <input
-            type="text"
-            id="user-id"
-            pattern="\d{8,}"
-            inputmode="numeric"
-            placeholder="Tu ID de cuenta Betwinner"
-            required
-            title="Por favor ingresa al menos 8 dígitos"
-          />
-          <div class="error-message" id="error-message"></div>
-        </div>
-        <button id="verify-btn">Verificar ID</button>
-      </div>
-
-      <div id="game-content" class="hidden">
+      <div id="game-content">
         <div class="aviator-display">
           <div class="multiplier" id="multiplier">OBTÉN TU SEÑAL</div>
         </div>
@@ -509,8 +485,7 @@
 
         <div class="history-container">
           <div class="history" id="history">
-            <!-- Los elementos del historial se agregarán aquí -->
-          </div>
+            </div>
         </div>
 
         <div class="controls">
@@ -526,11 +501,6 @@
 
     <script>
       // Elementos del DOM
-      const idForm = document.getElementById("id-form");
-      const gameContent = document.getElementById("game-content");
-      const userIdInput = document.getElementById("user-id");
-      const verifyBtn = document.getElementById("verify-btn");
-      const errorMessage = document.getElementById("error-message");
       const multiplierElement = document.getElementById("multiplier");
       const betAmountContainer = document.getElementById(
         "bet-amount-container"
@@ -539,14 +509,12 @@
       const historyElement = document.getElementById("history");
       const predictButton = document.getElementById("predict-btn");
       const getBetButton = document.getElementById("get-bet-btn");
-      const loadingOverlay = document.getElementById("loading-overlay");
       const howToUseBtn = document.getElementById("how-to-use-btn");
       const modalOverlay = document.getElementById("modal-overlay");
       const closeModal = document.getElementById("close-modal");
 
       // Estado del juego
       const gameState = {
-        userId: null,
         currentMultiplier: 0,
         predictionMultiplier: 0,
         crashMultiplier: 0,
@@ -557,32 +525,6 @@
         fixedCrash: null,
         betGenerated: false,
       };
-
-      // Manejador del botón Verificar ID
-      verifyBtn.addEventListener("click", () => {
-        // Validar entrada
-        if (userIdInput.validity.valid) {
-          // Mostrar overlay de carga
-          loadingOverlay.classList.add("active");
-
-          // Simular verificación por 4 segundos
-          setTimeout(() => {
-            gameState.userId = userIdInput.value;
-            loadingOverlay.classList.remove("active");
-            idForm.remove(); // Eliminar completamente la sección de verificación de ID
-            gameContent.classList.remove("hidden");
-            errorMessage.textContent = "";
-          }, 4000);
-        } else {
-          if (userIdInput.value.length < 8) {
-            errorMessage.textContent = "El ID debe tener al menos 8 dígitos";
-          } else if (!/^\d+$/.test(userIdInput.value)) {
-            errorMessage.textContent = "El ID solo debe contener números";
-          } else {
-            errorMessage.textContent = "Formato de ID inválido";
-          }
-        }
-      });
 
       // Manejador del botón Cómo usar
       howToUseBtn.addEventListener("click", () => {
@@ -603,12 +545,6 @@
         }
       });
 
-      // Forzar entrada numérica
-      userIdInput.addEventListener("input", function () {
-        this.value = this.value.replace(/\D/g, "");
-        errorMessage.textContent = "";
-      });
-
       // Generar monto de apuesta (50-100 MXN)
       function getBetAmount() {
         if (gameState.isRunning) return;
@@ -619,7 +555,7 @@
 
         // Mostrar estado de carga por 1 segundo
         setTimeout(() => {
-          // Generar monto aleatorio entre 50 y 100 MXN
+          // Generar monto aleatorio entre 1000 y 3000 CLP
           const min = 1000;
           const max = 3000;
           const randomAmount =
@@ -723,7 +659,7 @@
         historyElement.insertBefore(historyItem, historyElement.firstChild);
       }
 
-      // Función para establecer predicción fija (disponible en consola)
+      // Функция для установки фиксированного предсказания (доступна в консоли)
       window.setFixedPrediction = function (prediction, crash) {
         if (typeof prediction !== "number" || typeof crash !== "number") {
           console.error("Tanto la predicción como el crash deben ser números");
@@ -745,7 +681,7 @@
         );
       };
 
-      // Función para reiniciar predicción fija (disponible en consola)
+      // Функция для сброса фиксированного предсказания (доступна в консоли)
       window.resetPrediction = function () {
         gameState.fixedPrediction = null;
         gameState.fixedCrash = null;
@@ -756,43 +692,3 @@
     </script>
   </body>
 </html>
-
-<!-- Теперь вы можете использовать следующие функции в консоли разработчика:
-
-Установить фиксированное предсказание:
-
-javascript
-setFixedPrediction(2.5, 3.8); // Первый аргумент - сигнал, второй - краш
-Сбросить фиксированное предсказание (вернуться к случайным значениям):
-
-javascript
-resetPrediction();
-Примечания:
-
-Краш всегда должен быть больше значения сигнала
-
-Оба значения должны быть числами
-
-После установки фиксированного предсказания все последующие клики по кнопке "Get Signal" будут показывать указанные вами значения
-
-Чтобы вернуться к случайным значениям, используйте resetPrediction() -->
-
-<!-- Теперь вы можете использовать следующие функции в консоли разработчика:
-
-Установить фиксированное предсказание:
-
-javascript
-setFixedPrediction(2.5, 3.8); // Первый аргумент - сигнал, второй - краш
-Сбросить фиксированное предсказание (вернуться к случайным значениям):
-
-javascript
-resetPrediction();
-Примечания:
-
-Краш всегда должен быть больше значения сигнала
-
-Оба значения должны быть числами
-
-После установки фиксированного предсказания все последующие клики по кнопке "Get Signal" будут показывать указанные вами значения
-
-Чтобы вернуться к случайным значениям, используйте resetPrediction() -->
